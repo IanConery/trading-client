@@ -6,31 +6,73 @@ import { useState, useEffect } from "react";
 import { useWebSocketData } from "@/app/context/webSocketContext";
 import { HOLDINGS } from "@/app/lib/placeholder-crypto";
 
+
+// mock data from alphavantage api
+const inflationData = {
+  "name": "Inflation - US Consumer Prices",
+  "interval": "annual",
+  "unit": "percent",
+  "data": [
+    {
+        "date": "2023-01-01",
+        "value": "4.11633838374488"
+    },
+  ]
+};
+
+const unemploymentData = {
+  "name": "Unemployment Rate",
+  "interval": "monthly",
+  "unit": "percent",
+  "data": [
+    {
+        "date": "2024-07-01",
+        "value": "4.3"
+    },
+  ]
+};
+
+const tenYearYield = {
+  "name": "10-Year Treasury Constant Maturity Rate",
+  "interval": "monthly",
+  "unit": "percent",
+  "data": [
+    {
+        "date": "2024-08-01",
+        "value": "3.87"
+    },
+  ]
+};
+
+const interestRateData = {
+  "name": "Effective Federal Funds Rate",
+  "interval": "monthly",
+  "unit": "percent",
+  "data": [
+    {
+        "date": "2024-08-01",
+        "value": "5.33"
+    },
+  ]
+};
+
+const nonFarmData = {
+  "name": "Total Nonfarm Payroll",
+  "interval": "monthly",
+  "unit": "thousands of persons",
+  "data": [
+    {
+        "date": "2024-07-01",
+        "value": "158445"
+    },
+  ]
+};
+
 export default function Page() {
   const [total, setTotal] = useState<any>("0");
   const webSocket = useWebSocketData();
   const holdings: any = [].concat(HOLDINGS); // need to move this information to db
   const msft = holdings.filter(({ symbol }) => symbol === "MSFT")[0];
-  // const holdings = {
-  //   "XRP-USD": {
-  //     amount: 93189.296517,
-  //     lastPrice: "0",
-  //   },
-  //   "BTC-USD": {
-  //     amount: .89162235,
-  //     lastPrice: "0",
-  //   },
-  //   "LTC-USD": {
-  //     amount: 4,
-  //     lastPrice: "0",
-  //   },
-  //   "ETH-USD": {
-  //     amount: .490953,
-  //     lastPrice: "0",
-  //   },
-  // };
-
-  // const holdingsKeys = Object.keys(holdings);
 
   const calculateHoldings = () => {
     let total: any = 0;
@@ -39,10 +81,6 @@ export default function Page() {
       const { symbol, amount, lastPrice, market} = holding;
       total += (Number.parseFloat(amount) * Number.parseFloat(lastPrice));
     });
-    // for (const key in holdings) {
-    //   const { amount, lastPrice } = holdings[key];
-    //   total += (Number.parseFloat(amount) * Number.parseFloat(lastPrice));
-    // }
 
     return Number.parseFloat(total).toFixed(2);
   };
@@ -77,10 +115,11 @@ export default function Page() {
         <h1>S&P 500</h1>
       </div>
       <Ticker />
-      <h1>Inflation</h1>
-      <h1>Intrest Rate</h1>
-      <h1>Treasury Return (10yr)</h1>
-      <h1>Unemployment Rate</h1>
+      <h1>Inflation : %{Number.parseFloat(inflationData.data[0].value).toFixed(2)}</h1>
+      <h1>Intrest Rate : %{Number.parseFloat(interestRateData.data[0].value)}</h1>
+      <h1>Treasury Return (10yr) : %{Number.parseFloat(tenYearYield.data[0].value)}</h1>
+      <h1>Unemployment Rate : %{Number.parseFloat(unemploymentData.data[0].value)}</h1>
+      <h1>Nonfarm Payroll (x 1k people): {Number.parseFloat(nonFarmData.data[0].value)}</h1>
       <div className="mt-6 grid grid-cols-1 gap-6 md:grid-cols-4 lg:grid-cols-8">
 
       </div>
